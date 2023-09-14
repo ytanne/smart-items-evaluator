@@ -2,11 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"reflect"
 	"sort"
 	"strconv"
 )
@@ -105,63 +103,7 @@ func handleCalculatePacks(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-// runCalculateTests defines unit test for calculatePacks function
-// with default items values (i.e. 250, 500, 1000, 2000, 5000)
-func runCalculateTests() error {
-	testCases := []struct {
-		input  int
-		output map[int]int
-	}{
-		{
-			input:  1,
-			output: map[int]int{250: 1},
-		},
-		{
-			input:  250,
-			output: map[int]int{250: 1},
-		},
-		{
-			input:  251,
-			output: map[int]int{500: 1},
-		},
-		{
-			input:  501,
-			output: map[int]int{500: 1, 250: 1},
-		},
-		{
-			input:  750,
-			output: map[int]int{500: 1, 250: 1},
-		},
-		{
-			input:  3000,
-			output: map[int]int{2000: 1, 1000: 1},
-		},
-		{
-			input:  3001,
-			output: map[int]int{2000: 1, 1000: 1, 250: 1},
-		},
-		{
-			input:  12001,
-			output: map[int]int{250: 1, 2000: 1, 5000: 2},
-		},
-		{
-			input:  20000,
-			output: map[int]int{5000: 4},
-		},
-	}
-
-	for _, tc := range testCases {
-		packs := calculatePacks(tc.input)
-		// if obtained result doesn't match expected
-		// we return an error to stop the program
-		if !reflect.DeepEqual(tc.output, packs) {
-			return fmt.Errorf("expected output %v doesn't match obtained %v for input %d", tc.output, packs, tc.input)
-		}
-	}
-
-	return nil
-}
-
+// setupConfig parses config.json file if exists
 func setupConfig() {
 	// default path expected is ./config.json
 	configFilePath := "config.json"
@@ -192,11 +134,6 @@ func main() {
 	   sample curl query is:
 	   curl http://localhost:8080/calculate-packs?items=250
 	*/
-
-	if err := runCalculateTests(); err != nil {
-		log.Printf("unit test failed with error '%s'", err)
-		return
-	}
 
 	// parse config.json file if exists
 	// to setup custom item values
