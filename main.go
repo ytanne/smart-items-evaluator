@@ -33,6 +33,8 @@ func calculatePacks(target int) map[int]int {
 
 	// if target exceeds the max value in the items range
 	// we need to put it into the range
+	// for example, if target is 12001, we put 2x5000 into the result
+	// and continue with the remaining of 2001
 	if target > items[l-1] {
 		result[items[l-1]] = target / items[l-1]
 		target %= items[l-1]
@@ -46,15 +48,16 @@ func calculatePacks(target int) map[int]int {
 		// we need to check which one is closer to the target
 		// and put it into the result
 		if items[i] <= target && target <= items[i+1] {
-			// if target + minimal item is greater than the next item,
+			// if target + minimal item is greater than the next item (i.e. items[i+1]),
 			// it is better to put the next item into the result.
-			// for exmple, if target is 1800 and the next item is 2000,
+			// for example, if target is 1800 and the next item is 2000,
 			// it is better to put 2000 into the result than 1000 + 1000 or 1000 + 500 + 500
 			if items[i+1]-target-items[0] < 0 {
 				result[items[i+1]] = items[i+1] / target
 				target = target - items[i+1]
 			} else {
-				// otherwise, we put the lower item into the result
+				// otherwise, we put the current item (i.e. items[i] into the result
+				// for example, if target is 1700 and the current item is 1000
 				result[items[i]] = target / items[i]
 				target = target % items[i]
 			}
